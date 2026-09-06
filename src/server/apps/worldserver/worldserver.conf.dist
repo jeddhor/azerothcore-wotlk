@@ -4525,6 +4525,18 @@ AllowTwoSide.Interaction.Guild = 0
 AllowTwoSide.Interaction.Arena = 0
 
 #
+#
+#    Enchanting.VellumGrantsSkillGain
+#        Description: Whether enchanting a vellum raises Enchanting skill.
+#                     Retail grants no skill for vellums, so an enchanter can only practise by
+#                     consuming real gear. On a realm where enchanters are expected to earn their
+#                     living selling scrolls, that leaves them unable to level at any reasonable
+#                     rate. Applies to every character, players included, not only bots.
+#        Default:     1 - (Enabled, differs from retail)
+#                     0 - (Disabled, retail behaviour)
+
+Enchanting.VellumGrantsSkillGain = 1
+
 #    AllowTwoSide.Interaction.Auction
 #        Description: Allow auctions between factions. This flags all auction houses as Neutral,
 #                     and would also take a Neutral auction house cut from auctions.

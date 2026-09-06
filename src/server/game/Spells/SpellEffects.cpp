@@ -2870,6 +2870,13 @@ void Spell::EffectEnchantItemPerm(SpellEffIndex effIndex)
     // Handle vellums
     if (itemTarget->IsWeaponVellum() || itemTarget->IsArmorVellum())
     {
+        // Retail grants no skill for enchanting a vellum, which leaves an enchanter with no way to
+        // practise except by consuming real gear. On a realm whose enchanters are meant to make a
+        // living from scrolls that is a dead end, so this is configurable and enabled by default.
+        if (sWorld->getBoolConfig(CONFIG_ENCHANT_VELLUM_SKILL_GAIN) &&
+            !(m_CastItem && m_CastItem->GetTemplate()->HasFlag(ITEM_FLAG_NO_REAGENT_COST)))
+            p_caster->UpdateCraftSkill(m_spellInfo->Id);
+
         // destroy one vellum from stack
         uint32 count = 1;
         p_caster->DestroyItemCount(itemTarget, count, true);
