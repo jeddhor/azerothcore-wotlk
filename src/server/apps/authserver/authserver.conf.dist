@@ -171,7 +171,7 @@ StrictVersionCheck = 0
 #        Default:     ""
 #
 
-SourceDirectory = ""
+SourceDirectory = "/run/media/jason/02fc78e7-253c-41ae-8d63-cf3f6646b8a2/azerothcore-dev"
 
 #
 #    MySQLExecutable
