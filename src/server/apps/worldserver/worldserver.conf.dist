@@ -1801,16 +1801,14 @@ PlayerSaveInterval = 900000
 #        Default:     0  - (Disabled, Do not save character stats)
 #                     1+ - (Enabled, Level beyond which character stats are saved)
 
-PlayerSave.Stats.MinLevel = 0
-
+PlayerSave.Stats.MinLevel = 1
 #
 #    PlayerSave.Stats.SaveOnlyOnLogout
 #        Description: Save player stats only on logout.
 #        Default:     1 - (Enabled, Only save on logout)
 #                     0 - (Disabled, Save on every player save)
 
-PlayerSave.Stats.SaveOnlyOnLogout = 1
-
+PlayerSave.Stats.SaveOnlyOnLogout = 0
 #
 #    PlayerSave.AdditionalSaves
 #        Description: Bitmask of player data to save to the database a few seconds after
