@@ -1540,6 +1540,25 @@ bool Group::CountRollVote(ObjectGuid playerGUID, ObjectGuid Guid, uint8 Choice)
             break;
     }
 
+    // Dismiss the voter's own roll dialog.
+    //
+    // The client hides that frame locally when the player clicks Need, Greed or Pass -- no server
+    // packet is involved. A bot-controlled character votes through this function instead, so a
+    // player running as a selfbot never clicks, the frame is never hidden, and it sits on screen
+    // after the roll has been decided. Reported by the operator, and it happens only in selfbot
+    // mode, which is exactly what this explains: two human players never hit it.
+    //
+    // Re-sending the roll with a countdown of zero closes it. Harmless for an ordinary player, whose
+    // frame is already gone by the time this runs.
+    if (Player* voter = ObjectAccessor::FindConnectedPlayer(playerGUID))
+    {
+        if (Choice < MAX_ROLL_TYPE)
+        {
+            bool canNeed = (roll->rollVoteMask & ROLL_FLAG_TYPE_NEED) != 0;
+            SendLootStartRollToPlayer(0, voter->GetMapId(), voter, canNeed, *roll);
+        }
+    }
+
     if (roll->totalPass + roll->totalNeed + roll->totalGreed >= roll->totalPlayersRolling)
     {
         CountTheRoll(rollI);
