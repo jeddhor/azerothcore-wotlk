@@ -1498,7 +1498,7 @@ void Group::MasterLoot(Loot* loot, WorldObject* pLootedObject)
     }
 }
 
-bool Group::CountRollVote(ObjectGuid playerGUID, ObjectGuid Guid, uint8 Choice)
+bool Group::CountRollVote(ObjectGuid playerGUID, ObjectGuid Guid, uint8 Choice, bool dismissVoterFrame)
 {
     Rolls::iterator rollI = GetRoll(Guid);
     if (rollI == RollId.end())
@@ -1540,17 +1540,20 @@ bool Group::CountRollVote(ObjectGuid playerGUID, ObjectGuid Guid, uint8 Choice)
             break;
     }
 
-    // Dismiss the voter's own roll dialog.
+    // Dismiss the voter's own roll dialog -- but only for a vote that did not come from a click.
     //
-    // The client hides that frame locally when the player clicks Need, Greed or Pass -- no server
-    // packet is involved. A bot-controlled character votes through this function instead, so a
-    // player running as a selfbot never clicks, the frame is never hidden, and it sits on screen
-    // after the roll has been decided. Reported by the operator, and it happens only in selfbot
-    // mode, which is exactly what this explains: two human players never hit it.
+    // The client hides that frame locally when the player presses Need, Greed or Pass; no server
+    // packet dismisses it. A bot-controlled character votes through this function instead, never
+    // clicks, and so is left looking at a frame for a roll that has already been decided.
     //
-    // Re-sending the roll with a countdown of zero closes it. Harmless for an ordinary player, whose
-    // frame is already gone by the time this runs.
-    if (Player* voter = ObjectAccessor::FindConnectedPlayer(playerGUID))
+    // The original fix re-sent the roll here unconditionally, with a comment claiming it was
+    // "harmless for an ordinary player, whose frame is already gone by the time this runs". That
+    // was wrong, and it is the reason the dialogs came back worse: this function is also what the
+    // CMSG_LOOT_ROLL handler calls, so every human click was answered with a brand new frame. An
+    // operator playing a character normally had to dismiss one dialog after another.
+    //
+    // Hence the flag, defaulting to off. Only the playerbots roll manager sets it.
+    if (Player* voter = dismissVoterFrame ? ObjectAccessor::FindConnectedPlayer(playerGUID) : nullptr)
     {
         if (Choice < MAX_ROLL_TYPE)
         {

@@ -310,7 +310,15 @@ public:
     void MasterLoot(Loot* loot, WorldObject* pLootedObject);
     Rolls::iterator GetRoll(ObjectGuid Guid);
     void CountTheRoll(Rolls::iterator roll);
-    bool CountRollVote(ObjectGuid playerGUID, ObjectGuid Guid, uint8 Choise);
+    /**
+     * Record a roll vote.
+     *
+     * dismissVoterFrame re-sends the roll to the voter with a zero countdown, which closes the
+     * need/greed frame. Pass it ONLY for a vote that did not come from a client clicking the frame:
+     * the client hides it locally on click, so re-sending to a human opens a *fresh* dialog instead
+     * of closing anything. Bot-controlled characters never click, which is the case it exists for.
+     */
+    bool CountRollVote(ObjectGuid playerGUID, ObjectGuid Guid, uint8 Choise, bool dismissVoterFrame = false);
     void EndRoll(Loot* loot);
     void RemovePlayerFromRolls(ObjectGuid guid);
 
