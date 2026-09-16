@@ -314,6 +314,30 @@ void Group::ConvertToLFG(bool restricted /*= true*/)
     SendUpdate();
 }
 
+// The inverse of ConvertToLFG, for a group left flagged as a dungeon finder group after the dungeon
+// it was made for is gone. Such a group can neither re-queue -- LFGMgr treats every join as continuing
+// its (empty) dungeon -- nor enter any instance, since only its assigned dungeon admits it.
+void Group::ConvertFromLFG()
+{
+    if (!isLFGGroup())
+        return;
+
+    m_groupType = GroupType(m_groupType & ~(GROUPTYPE_LFG | GROUPTYPE_LFG_RESTRICTED));
+    m_lfgGroupFlags = 0;
+
+    if (!isBGGroup() && !isBFGroup())
+    {
+        CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_GROUP_TYPE);
+
+        stmt->SetData(0, uint8(m_groupType));
+        stmt->SetData(1, GetGUID().GetCounter());
+
+        CharacterDatabase.Execute(stmt);
+    }
+
+    SendUpdate();
+}
+
 bool Group::CheckLevelForRaid()
 {
     for (member_citerator citr = m_memberSlots.begin(); citr != m_memberSlots.end(); ++citr)
