@@ -209,9 +209,14 @@ void WorldSession::HandleLootMoneyOpcode(WorldPacket& /*recvData*/)
                 if (!member)
                     continue;
 
-                if (player->IsAtLootRewardDistance(member))
+                if (player->IsAtLootRewardDistance(member) && sScriptMgr->OnPlayerbotCanShareLootMoney(member))
                     playersNear.push_back(member);
             }
+
+            // Every member in range may have been excluded above; the money still has to go somewhere, and
+            // the division below must never see an empty list.
+            if (playersNear.empty())
+                playersNear.push_back(player);
 
             uint32 goldPerPlayer = uint32((loot->gold) / (playersNear.size()));
 

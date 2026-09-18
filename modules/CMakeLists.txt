@@ -38,6 +38,7 @@ set("AC_SCRIPTS_LIST" "")
 set(MOD_ALE_FOUND 0)
 set(MOD_ALE_PATH "")
 set(MOD_PLAYERBOTS_FOUND 0)
+set(MOD_BOTASSISTANCE_FOUND 0)
 
 foreach(include ${AC_ADD_SCRIPTS_INCLUDE})
   set("AC_SCRIPTS_INCLUDES" "#include \"${include}\"\n${AC_SCRIPTS_INCLUDES}")
@@ -82,14 +83,26 @@ foreach(SOURCE_MODULE ${MODULES_MODULE_LIST})
     ConfigureALEModule(${SOURCE_MODULE})
   endif()
 
-  if (SOURCE_MODULE MATCHES "mod-playerbots")
+  # Bot modules. MOD_BOT_FRAMEWORK gates the core's bot support that any bot module needs (socketless
+  # session hooks, bot movement and pathing). MOD_PLAYERBOTS gates only mod-playerbots' own database pool.
+  # Only a module that will actually be linked counts; a disabled one must not switch core code on.
+  if (SOURCE_MODULE MATCHES "mod-playerbots" AND ${MODULE_MODULE_VARIABLE} MATCHES "static|dynamic")
     set(MOD_PLAYERBOTS_FOUND 1)
     target_compile_options(database
       PRIVATE
         -DMOD_PLAYERBOTS)
     target_compile_options(game-interface
       INTERFACE
-        -DMOD_PLAYERBOTS)
+        -DMOD_PLAYERBOTS
+        -DMOD_BOT_FRAMEWORK)
+  endif()
+
+  if (SOURCE_MODULE MATCHES "mod-botassistance" AND ${MODULE_MODULE_VARIABLE} MATCHES "static|dynamic")
+    set(MOD_BOTASSISTANCE_FOUND 1)
+    target_compile_options(game-interface
+      INTERFACE
+        -DMOD_BOTASSISTANCE
+        -DMOD_BOT_FRAMEWORK)
   endif()
 
   # Build the Graph values
@@ -109,6 +122,13 @@ foreach(SOURCE_MODULE ${MODULES_MODULE_LIST})
     list(APPEND MODULE_GRAPH_VALUE_CONTAINS_MODULES_disabled ${SOURCE_MODULE})
   endif()
 endforeach()
+
+# Both bot modules subclass PlayerbotScript, create bot accounts and fill the Dungeon Finder queue; nothing
+# arbitrates between them. The same core serves either one, in separate installations.
+if (MOD_PLAYERBOTS_FOUND AND MOD_BOTASSISTANCE_FOUND)
+  message(FATAL_ERROR "mod-playerbots and mod-botassistance are mutually exclusive: enable only one of them "
+    "in this tree (disable the other with -DDISABLED_AC_MODULES or its MODULE_* linkage variable).")
+endif()
 
 list(SORT MODULE_GRAPH_KEYS)
 list(REMOVE_DUPLICATES MODULE_GRAPH_KEYS)

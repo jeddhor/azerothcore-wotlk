@@ -230,7 +230,7 @@ void WorldSessionMgr::KickAll()
     for (SessionMap::const_iterator itr = _offlineSessions.begin(); itr != _offlineSessions.end(); ++itr)
         itr->second->KickPlayer("KickAll offline sessions");
 
-#ifdef MOD_PLAYERBOTS
+#ifdef MOD_BOT_FRAMEWORK
     sScriptMgr->OnPlayerbotLogoutBots();
 #endif
 }

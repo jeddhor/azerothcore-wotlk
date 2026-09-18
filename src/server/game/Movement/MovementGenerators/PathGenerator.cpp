@@ -23,7 +23,7 @@
 #include "MMapMgr.h"
 #include "Map.h"
 #include "Metric.h"
-#ifdef MOD_PLAYERBOTS
+#ifdef MOD_BOT_FRAMEWORK
 #include "Player.h"
 #include "WorldSession.h"
 #endif
@@ -754,7 +754,7 @@ void PathGenerator::CreateFilter()
 {
     uint16 includeFlags = 0;
     uint16 excludeFlags = 0;
-#ifdef MOD_PLAYERBOTS
+#ifdef MOD_BOT_FRAMEWORK
     bool isBot = false;
 #endif
 
@@ -770,7 +770,7 @@ void PathGenerator::CreateFilter()
     }
     else // assume Player
     {
-#ifdef MOD_PLAYERBOTS
+#ifdef MOD_BOT_FRAMEWORK
         // Bots navigate with a stricter filter: include ground + water but exclude lava/slime and
         // NAV_GROUND_STEEP (the 50-60deg slopes the extractor tags via modAlmostUnwalkableTriangles), so
         // they keep off steep mountainsides and follow gentle ground/roads. Real players are unchanged and
@@ -793,7 +793,7 @@ void PathGenerator::CreateFilter()
     _filter.setIncludeFlags(includeFlags);
     _filter.setExcludeFlags(excludeFlags);
 
-#ifdef MOD_PLAYERBOTS
+#ifdef MOD_BOT_FRAMEWORK
     // Bots bias their routes away from deep water (swim only when necessary). poly.area == poly.flags ==
     // NavTerrain, so NAV_WATER doubles as the water area index. Real players and creatures assign no cost.
     if (isBot)

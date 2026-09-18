@@ -103,3 +103,33 @@ void ScriptMgr::OnPlayerbotLogoutBots()
         script->OnPlayerbotLogoutBots();
     });
 }
+
+bool ScriptMgr::OnPlayerbotCanShareLootMoney(Player* member)
+{
+    auto ret = IsValidBoolScript<PlayerbotScript>([&](PlayerbotScript* script)
+    {
+        return !script->OnPlayerbotCanShareLootMoney(member);
+    });
+
+    if (ret && *ret)
+    {
+        return false;
+    }
+
+    return true;
+}
+
+bool ScriptMgr::OnPlayerbotCountsForGroupReward(Player* member)
+{
+    auto ret = IsValidBoolScript<PlayerbotScript>([&](PlayerbotScript* script)
+    {
+        return !script->OnPlayerbotCountsForGroupReward(member);
+    });
+
+    if (ret && *ret)
+    {
+        return false;
+    }
+
+    return true;
+}

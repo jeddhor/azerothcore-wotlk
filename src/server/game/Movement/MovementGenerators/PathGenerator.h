@@ -32,7 +32,7 @@ class WorldObject;
 // 74*4.0f=296y number_of_points*interval = max_path_len
 // this is way more than actual evade range
 // I think we can safely cut those down even more
-#ifdef MOD_PLAYERBOTS
+#ifdef MOD_BOT_FRAMEWORK
 // Bots travel long-distance to quests; the default 74-poly cap forces
 // repeated re-pathfinding mid-route and produces partial paths short of
 // the destination. 148 covers most quest movements end-to-end.

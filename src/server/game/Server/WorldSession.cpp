@@ -469,7 +469,7 @@ bool WorldSession::Update(uint32 diff, PacketFilter& updater)
 
                         opHandle->Call(this, *packet);
                         LogUnprocessedTail(packet);
-#ifdef MOD_PLAYERBOTS
+#ifdef MOD_BOT_FRAMEWORK
                         sScriptMgr->OnPacketReceived(this, *packet);
 #endif
                     }
@@ -490,7 +490,7 @@ bool WorldSession::Update(uint32 diff, PacketFilter& updater)
 
                         opHandle->Call(this, *packet);
                         LogUnprocessedTail(packet);
-#ifdef MOD_PLAYERBOTS
+#ifdef MOD_BOT_FRAMEWORK
                         sScriptMgr->OnPacketReceived(this, *packet);
 #endif
                     }
@@ -503,7 +503,7 @@ bool WorldSession::Update(uint32 diff, PacketFilter& updater)
 
                         opHandle->Call(this, *packet);
                         LogUnprocessedTail(packet);
-#ifdef MOD_PLAYERBOTS
+#ifdef MOD_BOT_FRAMEWORK
                         sScriptMgr->OnPacketReceived(this, *packet);
 #endif
                     }
@@ -522,7 +522,7 @@ bool WorldSession::Update(uint32 diff, PacketFilter& updater)
 
                     opHandle->Call(this, *packet);
                     LogUnprocessedTail(packet);
-#ifdef MOD_PLAYERBOTS
+#ifdef MOD_BOT_FRAMEWORK
                     sScriptMgr->OnPacketReceived(this, *packet);
 #endif
                     break;

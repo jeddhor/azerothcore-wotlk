@@ -106,6 +106,11 @@ namespace Acore::ChatCommands
 
 */
 
+// Version of the PlayerbotScript hook set. A bot module tests it with #if to refuse to build against a core
+// that predates the hooks it relies on. Bump it whenever a hook is added or its contract changes.
+//   1 - OnPlayerbotCanShareLootMoney, OnPlayerbotCountsForGroupReward
+#define PLAYERBOT_SCRIPT_API_VERSION 1
+
 class PlayerbotScript : public ScriptObject
 {
 protected:
@@ -124,6 +129,14 @@ public:
     virtual void OnPlayerbotUpdateSessions(Player* /*player*/) { }
     virtual void OnPlayerbotLogout(Player* /*player*/) { }
     virtual void OnPlayerbotLogoutBots() { }
+
+    // Return false to leave a group member out of the money split when a corpse is looted: it is not
+    // added to the recipients, so the others divide the whole drop between them.
+    [[nodiscard]] virtual bool OnPlayerbotCanShareLootMoney(Player* /*member*/) { return true; }
+
+    // Return false to leave a group member out of kill rewards entirely: it neither counts toward the
+    // group's size and level sum (which divide experience and honour) nor receives a share.
+    [[nodiscard]] virtual bool OnPlayerbotCountsForGroupReward(Player* /*member*/) { return true; }
 };
 
 class ScriptMgr
@@ -761,6 +774,8 @@ public: /* PlayerbotScript */
     void OnPlayerbotUpdateSessions(Player* player);
     void OnPlayerbotLogout(Player* player);
     void OnPlayerbotLogoutBots();
+    bool OnPlayerbotCanShareLootMoney(Player* member);
+    bool OnPlayerbotCountsForGroupReward(Player* member);
 
 public: /* TicketScript */
 

@@ -88,7 +88,8 @@ void KillRewarder::_InitGroupData()
         // 2. In case when player is in group, initialize variables necessary for group calculations:
         for (GroupReference* itr = _group->GetFirstMember(); itr != nullptr; itr = itr->next())
             if (Player* member = itr->GetSource())
-                if ((_killer == member || member->IsAtGroupRewardDistance(_victim)))
+                if ((_killer == member || member->IsAtGroupRewardDistance(_victim)) &&
+                    sScriptMgr->OnPlayerbotCountsForGroupReward(member))
                 {
                     const uint8 lvl = _GetPlayerLevel(member);
                     if (member->IsAlive())
@@ -266,7 +267,10 @@ void KillRewarder::_RewardGroup()
             {
                 if (Player* member = itr->GetSource())
                 {
-                    if (_killer == member || member->IsAtGroupRewardDistance(_victim))
+                    // Must match the membership test in _InitGroupData: a member left out of the shares must
+                    // not be paid from them.
+                    if ((_killer == member || member->IsAtGroupRewardDistance(_victim)) &&
+                        sScriptMgr->OnPlayerbotCountsForGroupReward(member))
                     {
                         _RewardPlayer(member, isDungeon);
                         // Xinef: only count players
