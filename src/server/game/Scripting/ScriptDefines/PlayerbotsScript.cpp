@@ -119,6 +119,21 @@ bool ScriptMgr::OnPlayerbotCanShareLootMoney(Player* member)
     return true;
 }
 
+bool ScriptMgr::OnPlayerbotCanBeLooter(Player* member)
+{
+    auto ret = IsValidBoolScript<PlayerbotScript>([&](PlayerbotScript* script)
+    {
+        return !script->OnPlayerbotCanBeLooter(member);
+    });
+
+    if (ret && *ret)
+    {
+        return false;
+    }
+
+    return true;
+}
+
 bool ScriptMgr::OnPlayerbotCountsForGroupReward(Player* member)
 {
     auto ret = IsValidBoolScript<PlayerbotScript>([&](PlayerbotScript* script)

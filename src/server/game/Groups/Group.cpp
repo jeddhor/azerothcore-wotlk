@@ -2143,7 +2143,7 @@ void Group::UpdateLooterGuid(WorldObject* pLootedObject, bool ifneed)
     for (member_citerator itr = guid_itr; itr != m_memberSlots.end(); ++itr)
     {
         if (Player* player = ObjectAccessor::FindPlayer(itr->guid))
-            if (player->IsAtLootRewardDistance(pLootedObject))
+            if (player->IsAtLootRewardDistance(pLootedObject) && sScriptMgr->OnPlayerbotCanBeLooter(player))
             {
                 pNewLooter = player;
                 break;
@@ -2156,7 +2156,7 @@ void Group::UpdateLooterGuid(WorldObject* pLootedObject, bool ifneed)
         for (member_citerator itr = m_memberSlots.begin(); itr != guid_itr; ++itr)
         {
             if (Player* player = ObjectAccessor::FindPlayer(itr->guid))
-                if (player->IsAtLootRewardDistance(pLootedObject))
+                if (player->IsAtLootRewardDistance(pLootedObject) && sScriptMgr->OnPlayerbotCanBeLooter(player))
                 {
                     pNewLooter = player;
                     break;
