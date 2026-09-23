@@ -1638,6 +1638,21 @@ DisableWaterBreath = 4
 AllFlightPaths = 0
 
 #
+#    AllowFlyingMounts.OldWorld
+#        Description: Allow flying mounts in Eastern Kingdoms and Kalimdor, which Blizzard never permitted
+#                     before Cataclysm. Affects those two continents only: instances, battlegrounds and
+#                     Outland keep the rules they already have, Cold Weather Flying is still required in
+#                     Northrend, and indoor areas are still refused -- flying mounts are outdoors-only
+#                     spells, so you cannot take off in a cave and flying into one dismounts you.
+#                     The old world was built before flight and is not sealed from above: expect to reach
+#                     unfinished terrain, designer islands and the tops of things never meant to be stood
+#                     on. Flying far out to sea raises the fatigue bar exactly as swimming does.
+#        Default:     0 - (Disabled)
+#                     1 - (Enabled)
+
+AllowFlyingMounts.OldWorld = 0
+
+#
 #    InstantFlightPaths
 #        Description: Flight paths will take players to their destination instantly instead
 #                     of making them wait while flying.

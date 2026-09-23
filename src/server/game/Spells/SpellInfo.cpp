@@ -27,6 +27,8 @@
 #include "SpellAuraDefines.h"
 #include "SpellAuraEffects.h"
 #include "SpellMgr.h"
+#include "AreaDefines.h"
+#include "World.h"
 
 uint32 GetTargetFlagMask(SpellTargetObjectTypes objType)
 {
@@ -1527,7 +1529,22 @@ SpellCastResult SpellInfo::CheckLocation(uint32 map_id, uint32 zone_id, uint32 a
             areaEntry = sAreaTableStore.LookupEntry(zone_id);
         }
 
-        if (!areaEntry || !areaEntry->IsFlyable() || (strict && (areaEntry->flags & AREA_FLAG_NO_FLY_ZONE) != 0) || !player->canFlyInZone(map_id, zone_id, this))
+        // Blizzard marks where flight is permitted with AREA_FLAG_OUTLAND, and set it on no part of Azeroth:
+        // the old world was built before flying mounts existed and was never meant to be seen from above. A
+        // realm may allow it anyway, and only for the two open continents -- instances, battlegrounds and
+        // Outland's deliberately unflagged interiors keep the rules they already have.
+        bool flyableHere = areaEntry && areaEntry->IsFlyable();
+        if (areaEntry && !flyableHere && sWorld->getBoolConfig(CONFIG_ALLOW_FLYING_MOUNTS_OLD_WORLD))
+        {
+            flyableHere = map_id == MAP_EASTERN_KINGDOMS || map_id == MAP_KALIMDOR;
+        }
+
+        // `player` is null when this is asked about a controlled unit's auras during an area change, and
+        // "may this player fly here" has no answer then; leave such an aura alone rather than guess. The
+        // null check is not decoration: the old world reached the flyable test above and returned before
+        // ever getting here, so allowing flight there puts a null dereference on a live path.
+        if (!flyableHere || (strict && (areaEntry->flags & AREA_FLAG_NO_FLY_ZONE) != 0) ||
+            (player && !player->canFlyInZone(map_id, zone_id, this)))
         {
             return SPELL_FAILED_INCORRECT_AREA;
         }

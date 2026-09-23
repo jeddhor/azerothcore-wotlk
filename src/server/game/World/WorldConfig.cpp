@@ -262,6 +262,7 @@ void WorldConfig::BuildConfigCache()
 
     SetConfigValue<uint32>(CONFIG_MAX_RECRUIT_A_FRIEND_BONUS_PLAYER_LEVEL_DIFFERENCE, "RecruitAFriend.MaxDifference", 4);
     SetConfigValue<bool>(CONFIG_ALL_TAXI_PATHS, "AllFlightPaths", false);
+    SetConfigValue<bool>(CONFIG_ALLOW_FLYING_MOUNTS_OLD_WORLD, "AllowFlyingMounts.OldWorld", false);
     SetConfigValue<uint32>(CONFIG_INSTANT_TAXI, "InstantFlightPaths", 0);
 
     SetConfigValue<bool>(CONFIG_INSTANCE_IGNORE_LEVEL, "Instance.IgnoreLevel", false);
