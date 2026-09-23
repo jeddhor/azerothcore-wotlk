@@ -1,0 +1,10 @@
+# Anything derived from the game client stays out of version control.
+#
+# A modified AreaTable.dbc is Blizzard's file with one bit changed: it carries all 2307 of their area
+# records, including every area name in sixteen languages. That is their content, and committing or
+# distributing it would be distributing their content. The tools beside this file are ours and carry
+# none of it -- they read a client you already own.
+*.dbc
+*.MPQ
+*.mpq
+makepatch
