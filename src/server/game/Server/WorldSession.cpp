@@ -1543,6 +1543,17 @@ void WorldSession::ResetTimeSync()
 
 void WorldSession::SendTimeSync()
 {
+    // A bot session has no client to answer, and every unanswered request stays in _pendingTimeSyncRequests
+    // for good: one every ten seconds, 8,640 a day per bot, never freed. Found by heap-profiling an idle
+    // realm with eighty parked bots, where it was a steady few megabytes a day. Nothing on the server needs
+    // a bot's clock, so a bot is simply never asked -- and a zero timer keeps the periodic branch in Update
+    // from asking again.
+    if (IsBot())
+    {
+        _timeSyncTimer = 0;
+        return;
+    }
+
     WorldPacket data(SMSG_TIME_SYNC_REQ, 4);
     data << uint32(_timeSyncNextCounter);
     SendPacket(&data);
