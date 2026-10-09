@@ -84,6 +84,14 @@ int m_ServiceStatus = -1;
 #define _ACORE_CORE_CONFIG "worldserver.conf"
 #endif
 
+#if AC_PLATFORM != AC_PLATFORM_WINDOWS
+// jemalloc's options, read before main() and before any config file. Without a background thread, an arena
+// returns freed pages only when it next allocates, and the arenas of idle threads never do. This overrides
+// jemalloc's weak default; MALLOC_CONF in the environment still overrides this. Unused in a NOJEM build.
+extern "C" char const* malloc_conf;
+char const* malloc_conf = "background_thread:true,muzzy_decay_ms:0";
+#endif
+
 using namespace boost::program_options;
 namespace fs = std::filesystem;
 
