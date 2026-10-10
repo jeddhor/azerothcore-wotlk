@@ -2862,8 +2862,14 @@ void Map::ProcessCreatureRespawn(ObjectGuid::LowType spawnId)
     // reads it back and loads as DEAD instead of ALIVE
     RemoveCreatureRespawnTime(spawnId);
 
+    // Not allowDuplicate: no copy is alive (checked above), so this only clears out dead ones before the new
+    // creature is made. They exist. The grid loader creates a spawn with a pending respawn time as a Dead
+    // placeholder, and a corpse outlives its timer in a cell nobody is near; either leaves on its own only from
+    // Creature::Update, which runs in active cells, while this runs map-wide. Skipping the cleanup left the old
+    // object in the map beside its replacement: ~380 creatures an hour on an idle realm, most of them in
+    // Northrend, whose count rose from ~23,000 to 26,700 in nine hours.
     Creature* creature = new Creature();
-    if (!creature->LoadCreatureFromDB(spawnId, this, true, true))
+    if (!creature->LoadCreatureFromDB(spawnId, this, true))
         delete creature;
 }
 
